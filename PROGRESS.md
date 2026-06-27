@@ -11,10 +11,15 @@
 - server/server.js (Verified & Connected)
 - server/config/db.js (Verified & Connected)
 - server/models/User.js (Verified & Schema logic tested)
+- server/routes/auth.routes.js (Verified & Completed)
+- server/controllers/auth.controller.js (Verified & Completed)
+- server/middleware/auth.middleware.js (Verified & Completed)
+- server/utils/sendEmail.js (Verified & Completed)
+- server/utils/generateToken.js (Verified & Completed)
 
 ## In Progress 🔄
 
-- server/routes/auth.routes.js
+- None
 
 ## Pending ⏳
 

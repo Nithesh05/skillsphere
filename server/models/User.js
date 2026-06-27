@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema(
   {
@@ -93,6 +94,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    verificationToken: String,
+    verificationTokenExpire: Date,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,
@@ -120,6 +125,34 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
   // Since password field is select: false, this.password will only be available 
   // if explicitly selected in the query, which we'll do in the login controller
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Generate and hash password reset token
+userSchema.methods.getResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+
+  return resetToken;
+};
+
+// Generate and hash email verification token
+userSchema.methods.getEmailVerificationToken = function () {
+  const verificationToken = crypto.randomBytes(20).toString('hex');
+
+  this.verificationToken = crypto
+    .createHash('sha256')
+    .update(verificationToken)
+    .digest('hex');
+
+  this.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours expiry
+
+  return verificationToken;
 };
 
 const User = mongoose.model('User', userSchema);
